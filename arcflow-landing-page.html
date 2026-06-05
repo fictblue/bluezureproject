@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arcflow — Automate the work. Own the outcome.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root[data-theme="dark"] {
+      --bg: #06080D;
+      --bg-card: #0C1018;
+      --bg-card2: #111824;
+      --bg-elevated: #151E2A;
+      --border: rgba(255,255,255,0.06);
+      --border-soft: rgba(255,255,255,0.04);
+      --border-hover: rgba(255,255,255,0.12);
+      --text: #EBE8E0;
+      --text-muted: #7A8090;
+      --text-dim: #3A3E4A;
+      --accent: #D4F04C;
+      --accent2: #4CF0C0;
+      --accent-dim: rgba(212,240,76,0.08);
+      --accent-glow: rgba(212,240,76,0.18);
+      --teal-dim: rgba(76,240,192,0.08);
+    }
+    :root[data-theme="light"] {
+      --bg: #F6F4EE;
+      --bg-card: #FFFFFF;
+      --bg-card2: #EFEDE6;
+      --bg-elevated: #E8E6DE;
+      --border: rgba(0,0,0,0.07);
+      --border-soft: rgba(0,0,0,0.04);
+      --border-hover: rgba(0,0,0,0.14);
+      --text: #0E1016;
+      --text-muted: #5A606E;
+      --text-dim: #B0B4BE;
+      --accent: #3A7A00;
+      --accent2: #007A5A;
+      --accent-dim: rgba(58,122,0,0.07);
+      --accent-glow: rgba(58,122,0,0.12);
+      --teal-dim: rgba(0,122,90,0.07);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background .35s, color .35s;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.045) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none; z-index: 0;
+    }
+    :root[data-theme="light"] body::after {
+      background-image: radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px);
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2.5rem; height: 60px;
+      background: rgba(6,8,13,0.75);
+      backdrop-filter: blur(20px) saturate(1.4);
+      border-bottom: 0.5px solid var(--border);
+      transition: background .35s;
+    }
+    :root[data-theme="light"] nav { background: rgba(246,244,238,0.82); }
+    .nav-logo {
+      font-family: 'Instrument Serif', serif;
+      font-size: 22px; color: var(--text);
+      display: flex; align-items: center; gap: 10px;
+      letter-spacing: -0.3px; text-decoration: none;
+    }
+    .logo-mark {
+      width: 26px; height: 26px; border-radius: 6px;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-mark svg { width: 14px; height: 14px; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 13.5px; font-weight: 400; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .btn-ghost { background: none; border: 0.5px solid var(--border-hover); color: var(--text-muted); padding: 7px 15px; border-radius: 7px; font-size: 13px; cursor: pointer; font-family: 'Outfit', sans-serif; transition: all .2s; }
+    .btn-ghost:hover { color: var(--text); background: var(--bg-card2); }
+    .btn-primary { background: var(--accent); color: #06080D; border: none; padding: 7px 18px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Outfit', sans-serif; transition: all .2s; }
+    .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+    .toggle { width: 34px; height: 34px; border-radius: 7px; background: var(--bg-card2); border: 0.5px solid var(--border); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all .2s; }
+    .toggle:hover { border-color: var(--border-hover); color: var(--text); }
+
+    section { position: relative; z-index: 1; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 4rem;
+      padding: 100px 2.5rem 80px;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .hero-left { display: flex; flex-direction: column; align-items: flex-start; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-dim); border: 0.5px solid var(--accent-glow);
+      border-radius: 4px; padding: 5px 12px;
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 2rem;
+      animation: fadeUp .6s ease both;
+    }
+    .blink { animation: blink 1.2s step-end infinite; display: inline-block; width: 7px; height: 12px; background: var(--accent); margin-left: 2px; vertical-align: -1px; }
+    @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+    .hero h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(44px, 5.5vw, 72px); font-weight: 400;
+      line-height: 1.08; letter-spacing: -1.5px; margin-bottom: 1.75rem;
+      animation: fadeUp .6s .1s ease both;
+    }
+    .hero h1 i { font-style: italic; color: var(--accent); }
+    .hero-desc {
+      font-size: 16px; color: var(--text-muted); max-width: 420px;
+      font-weight: 300; line-height: 1.75; margin-bottom: 2.5rem;
+      animation: fadeUp .6s .2s ease both;
+    }
+    .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; animation: fadeUp .6s .3s ease both; }
+    .btn-lg { padding: 13px 24px; font-size: 14px; border-radius: 9px; }
+    .hero-meta {
+      margin-top: 2.5rem; display: flex; align-items: center; gap: 1.5rem;
+      font-size: 12.5px; color: var(--text-muted);
+      animation: fadeUp .6s .4s ease both;
+    }
+    .hero-meta-item { display: flex; align-items: center; gap: 6px; }
+    .hero-meta-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+
+    /* MOCKUP */
+    .hero-right { animation: fadeUp .8s .15s ease both; position: relative; }
+    .mockup-frame {
+      background: var(--bg-card);
+      border: 0.5px solid var(--border-hover); border-radius: 16px; overflow: hidden;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 0.5px var(--border);
+    }
+    :root[data-theme="light"] .mockup-frame { box-shadow: 0 24px 60px rgba(0,0,0,0.12); }
+    .mockup-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 16px; background: var(--bg-elevated);
+      border-bottom: 0.5px solid var(--border);
+    }
+    .mock-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .mock-url {
+      flex: 1; background: var(--bg-card2); border: 0.5px solid var(--border);
+      border-radius: 5px; padding: 4px 10px;
+      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); margin-left: 6px;
+    }
+    .mockup-body { padding: 20px; }
+    .mock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .mock-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .mock-badge {
+      font-family: 'DM Mono', monospace; font-size: 9px; padding: 3px 8px;
+      border-radius: 4px; background: var(--accent-dim); color: var(--accent);
+      border: 0.5px solid var(--accent-glow); letter-spacing: .05em;
+    }
+    .mock-chart {
+      background: var(--bg-card2); border: 0.5px solid var(--border);
+      border-radius: 10px; padding: 16px; margin-bottom: 14px;
+      position: relative; overflow: hidden; height: 100px;
+    }
+    .chart-label { font-size: 10px; color: var(--text-muted); margin-bottom: 8px; font-family: 'DM Mono', monospace; }
+    .chart-val { font-family: 'Instrument Serif', serif; font-size: 28px; color: var(--text); line-height: 1; }
+    .chart-sub { font-size: 10px; color: var(--accent); margin-top: 2px; }
+    .chart-bars { position: absolute; bottom: 0; right: 0; display: flex; align-items: flex-end; gap: 3px; padding: 0 16px 0 0; height: 70px; }
+    .bar { width: 12px; border-radius: 3px 3px 0 0; background: var(--accent-dim); border-top: 1.5px solid var(--accent-glow); }
+    .bar.hi { background: rgba(212,240,76,0.18); border-top-color: var(--accent); }
+    .mock-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .mock-stat { background: var(--bg-card2); border: 0.5px solid var(--border); border-radius: 8px; padding: 10px; }
+    .mock-stat-val { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.2; }
+    .mock-stat-label { font-size: 9px; color: var(--text-muted); font-family: 'DM Mono', monospace; margin-top: 2px; letter-spacing: .03em; }
+    .mock-rows { display: flex; flex-direction: column; gap: 6px; }
+    .mock-row {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg-card2); border: 0.5px solid var(--border);
+      border-radius: 7px; padding: 8px 12px;
+    }
+    .row-icon { width: 22px; height: 22px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+    .row-name { font-size: 11px; color: var(--text); flex: 1; }
+    .row-status { font-family: 'DM Mono', monospace; font-size: 9px; padding: 2px 7px; border-radius: 3px; letter-spacing: .05em; }
+    .s-ok  { background: rgba(76,240,192,0.1); color: var(--accent2); border: 0.5px solid rgba(76,240,192,0.2); }
+    .s-run { background: var(--accent-dim); color: var(--accent); border: 0.5px solid var(--accent-glow); }
+    .s-wait{ background: rgba(255,255,255,0.05); color: var(--text-muted); border: 0.5px solid var(--border); }
+    .mockup-chip {
+      position: absolute; bottom: -14px; left: -20px;
+      background: var(--bg-elevated); border: 0.5px solid var(--border-hover);
+      border-radius: 10px; padding: 10px 14px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      animation: float 3s ease-in-out infinite;
+    }
+    :root[data-theme="light"] .mockup-chip { box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+    @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-5px);} }
+    .chip-icon { width: 28px; height: 28px; border-radius: 7px; background: var(--teal-dim); border: 0.5px solid rgba(76,240,192,0.2); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .chip-text-top { font-size: 11px; font-weight: 600; color: var(--text); }
+    .chip-text-sub { font-size: 9px; color: var(--accent2); font-family: 'DM Mono', monospace; }
+
+    /* LOGOS */
+    .logos {
+      padding: 56px 2.5rem; border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border);
+      max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 3rem; flex-wrap: wrap;
+    }
+    .logos-label { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .14em; color: var(--text-dim); white-space: nowrap; flex-shrink: 0; }
+    .logos-row { display: flex; align-items: center; gap: 2.5rem; flex: 1; flex-wrap: wrap; }
+    .logo-pill { font-family: 'Instrument Serif', serif; font-size: 17px; color: var(--text-dim); font-style: italic; letter-spacing: -.3px; transition: color .2s; cursor: default; }
+    .logo-pill:hover { color: var(--text-muted); }
+
+    /* FEATURES */
+    .features { padding: 120px 2.5rem; max-width: 1200px; margin: 0 auto; }
+    .section-eyebrow { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .16em; color: var(--accent); margin-bottom: 1.25rem; }
+    .section-title { font-family: 'Instrument Serif', serif; font-size: clamp(32px,4vw,52px); font-weight: 400; letter-spacing: -1.5px; line-height: 1.1; max-width: 600px; margin-bottom: 4rem; }
+    .section-title em { font-style: italic; color: var(--accent); }
+    .features-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 0.5px solid var(--border); border-radius: 18px; overflow: hidden; }
+    .feature-item { background: var(--bg-card); padding: 2.25rem; transition: background .2s; }
+    .feature-item:hover { background: var(--bg-card2); }
+    .feature-num { font-family: 'Instrument Serif', serif; font-size: 13px; color: var(--text-dim); margin-bottom: 1.5rem; font-style: italic; }
+    .feature-item h3 { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 400; letter-spacing: -.5px; margin-bottom: .75rem; }
+    .feature-item p { font-size: 14px; color: var(--text-muted); line-height: 1.7; max-width: 360px; }
+    .feature-tag { display: inline-block; margin-top: 1.25rem; font-family: 'DM Mono', monospace; font-size: 10px; padding: 4px 10px; border-radius: 4px; background: var(--accent-dim); color: var(--accent); border: 0.5px solid var(--accent-glow); letter-spacing: .05em; }
+    .feature-item.wide { grid-column: span 2; }
+
+    /* METRICS */
+    .metrics { padding: 0 2.5rem 100px; max-width: 1200px; margin: 0 auto; }
+    .metrics-grid { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 18px; display: grid; grid-template-columns: repeat(4,1fr); overflow: hidden; }
+    .metric-item { padding: 3rem 2rem; border-right: 0.5px solid var(--border); transition: background .2s; }
+    .metric-item:last-child { border-right: none; }
+    .metric-item:hover { background: var(--bg-card2); }
+    .metric-val { font-family: 'Instrument Serif', serif; font-size: 52px; font-weight: 400; letter-spacing: -2px; line-height: 1; color: var(--text); }
+    .metric-val sup { font-size: 22px; vertical-align: super; letter-spacing: 0; }
+    .metric-label { font-size: 13px; color: var(--text-muted); margin-top: .5rem; font-weight: 300; }
+    .metric-delta { margin-top: .75rem; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent2); letter-spacing: .04em; }
+
+    /* PRICING */
+    .pricing { padding: 100px 2.5rem; border-top: 0.5px solid var(--border); }
+    .pricing-inner { max-width: 1100px; margin: 0 auto; }
+    .pricing-top { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 2rem; margin-bottom: 3rem; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(290px,1fr)); gap: 16px; }
+    .p-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 18px; padding: 2.25rem; transition: border-color .2s, transform .2s; position: relative; }
+    .p-card:hover { border-color: var(--border-hover); transform: translateY(-3px); }
+    .p-card.featured { border: 1px solid var(--accent); background: var(--bg-card2); }
+    .feat-chip { position: absolute; top: -11px; left: 24px; background: var(--accent); color: #06080D; font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: .1em; padding: 4px 12px; border-radius: 4px; }
+    .p-name { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .14em; color: var(--text-muted); margin-bottom: 1rem; }
+    .p-price { font-family: 'Instrument Serif', serif; font-size: 52px; font-weight: 400; letter-spacing: -2px; line-height: 1; margin-bottom: .25rem; }
+    .p-price sup { font-size: 22px; vertical-align: super; letter-spacing: 0; }
+    .p-period { font-size: 12px; color: var(--text-muted); margin-bottom: 1.75rem; font-family: 'DM Mono', monospace; letter-spacing: .03em; }
+    .p-div { border: none; border-top: 0.5px solid var(--border); margin: 1.5rem 0; }
+    .p-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 2rem; }
+    .p-features li { font-size: 13.5px; color: var(--text-muted); display: flex; gap: 10px; align-items: flex-start; }
+    .p-features li::before { content: '→'; color: var(--accent); flex-shrink: 0; font-family: 'DM Mono', monospace; font-size: 11px; margin-top: 1px; }
+    .p-features li.off { color: var(--text-dim); }
+    .p-features li.off::before { color: var(--text-dim); }
+    .btn-plan { width: 100%; padding: 12px; border-radius: 9px; font-size: 13.5px; font-weight: 500; cursor: pointer; font-family: 'Outfit', sans-serif; transition: all .2s; }
+
+    /* TESTIMONIALS */
+    .testimonials { padding: 100px 2.5rem; border-top: 0.5px solid var(--border); }
+    .testi-inner { max-width: 1100px; margin: 0 auto; }
+    .testi-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 16px; margin-top: 3.5rem; }
+    .t-card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: 18px; padding: 2rem; transition: border-color .2s; display: flex; flex-direction: column; }
+    .t-card:hover { border-color: var(--border-hover); }
+    .t-quote { font-family: 'Instrument Serif', serif; font-size: 18px; font-weight: 400; font-style: italic; line-height: 1.6; color: var(--text); flex: 1; margin-bottom: 2rem; }
+    .t-quote::before { content: '\201C'; color: var(--accent); font-size: 32px; line-height: .5; display: block; margin-bottom: .75rem; }
+    .t-author { display: flex; align-items: center; gap: 12px; padding-top: 1.5rem; border-top: 0.5px solid var(--border); }
+    .t-av { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-card2); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Instrument Serif', serif; font-style: italic; font-size: 14px; color: var(--accent); }
+    .t-name { font-size: 14px; font-weight: 500; color: var(--text); }
+    .t-role { font-size: 11px; color: var(--text-muted); font-family: 'DM Mono', monospace; letter-spacing: .02em; }
+
+    /* CTA */
+    .cta-section { padding: 100px 2.5rem; border-top: 0.5px solid var(--border); }
+    .cta-inner { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .cta-left h2 { font-family: 'Instrument Serif', serif; font-size: clamp(32px,4vw,52px); font-weight: 400; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 1.25rem; }
+    .cta-left h2 em { font-style: italic; color: var(--accent); }
+    .cta-left p { font-size: 15px; color: var(--text-muted); font-weight: 300; line-height: 1.7; }
+    .cta-right { display: flex; flex-direction: column; gap: 10px; }
+    .cta-input { background: var(--bg-card); border: 0.5px solid var(--border-hover); border-radius: 9px; padding: 13px 16px; font-size: 14px; color: var(--text); font-family: 'Outfit', sans-serif; outline: none; transition: border-color .2s; }
+    .cta-input:focus { border-color: var(--accent); }
+    .cta-input::placeholder { color: var(--text-dim); }
+    .cta-note { font-size: 11px; color: var(--text-dim); font-family: 'DM Mono', monospace; letter-spacing: .03em; }
+
+    /* FOOTER */
+    footer { border-top: 0.5px solid var(--border); padding: 4rem 2.5rem 2.5rem; }
+    .footer-top { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 3rem; margin-bottom: 3rem; }
+    .footer-brand p { font-size: 13px; color: var(--text-muted); max-width: 240px; line-height: 1.65; font-weight: 300; margin-top: .75rem; }
+    .footer-links { display: grid; grid-template-columns: repeat(3,1fr); gap: 3rem; }
+    .fc h4 { font-family: 'DM Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .14em; color: var(--text-dim); margin-bottom: 1.25rem; }
+    .fc ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .fc a { font-size: 13.5px; color: var(--text-muted); text-decoration: none; transition: color .2s; }
+    .fc a:hover { color: var(--text); }
+    .footer-bottom { max-width: 1200px; margin: 0 auto; padding-top: 2rem; border-top: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-bottom p { font-size: 12px; color: var(--text-dim); font-family: 'DM Mono', monospace; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; padding-top: 90px; }
+      .hero-right { display: none; }
+      .features-layout { grid-template-columns: 1fr; }
+      .feature-item.wide { grid-column: span 1; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .metric-item:nth-child(2) { border-right: none; }
+      .metric-item { border-bottom: 0.5px solid var(--border); }
+      .cta-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+      .footer-links { grid-template-columns: 1fr 1fr; }
+      nav .nav-links { display: none; }
+    }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(22px);} to{opacity:1;transform:translateY(0);} }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-mark"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7L7 2L12 7L7 12L2 7Z" fill="#06080D"/></svg></div>
+    Arcflow
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#testimonials">Reviews</a></li>
+    <li><a href="#">Docs</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="toggle" onclick="toggleTheme()" aria-label="Toggle theme"><span id="ti">☀</span></button>
+    <button class="btn-ghost">Sign in</button>
+    <button class="btn-primary">Get started</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">v2.4 — Now with AI reasoning<span class="blink"></span></div>
+    <h1>Automate the<br>work. Own <i>the</i><br><i>outcome.</i></h1>
+    <p class="hero-desc">Arcflow connects your stack, automates your pipelines, and gives engineering teams the clarity to move fast — without the glue code.</p>
+    <div class="hero-cta">
+      <button class="btn-primary btn-lg">Start for free →</button>
+      <button class="btn-ghost btn-lg">Watch demo</button>
+    </div>
+    <div class="hero-meta">
+      <span class="hero-meta-item"><span class="hero-meta-dot"></span>No credit card</span>
+      <span class="hero-meta-item"><span class="hero-meta-dot"></span>SOC 2 certified</span>
+      <span class="hero-meta-item"><span class="hero-meta-dot"></span>14-day free trial</span>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="mockup-frame">
+      <div class="mockup-bar">
+        <div class="mock-dot" style="background:#FF5F57;"></div>
+        <div class="mock-dot" style="background:#FEBC2E;"></div>
+        <div class="mock-dot" style="background:#28C840;"></div>
+        <div class="mock-url">app.arcflow.io / workflows</div>
+      </div>
+      <div class="mockup-body">
+        <div class="mock-header">
+          <span class="mock-title">Overview — June 2025</span>
+          <span class="mock-badge">LIVE</span>
+        </div>
+        <div class="mock-chart">
+          <div class="chart-label">RUNS THIS WEEK</div>
+          <div class="chart-val">84,291</div>
+          <div class="chart-sub">↑ 18.4% vs last week</div>
+          <div class="chart-bars">
+            <div class="bar" style="height:30px;"></div>
+            <div class="bar" style="height:48px;"></div>
+            <div class="bar" style="height:36px;"></div>
+            <div class="bar" style="height:56px;"></div>
+            <div class="bar" style="height:42px;"></div>
+            <div class="bar hi" style="height:64px;"></div>
+            <div class="bar hi" style="height:70px;"></div>
+          </div>
+        </div>
+        <div class="mock-stats">
+          <div class="mock-stat"><div class="mock-stat-val">99.98%</div><div class="mock-stat-label">UPTIME</div></div>
+          <div class="mock-stat"><div class="mock-stat-val">42ms</div><div class="mock-stat-label">AVG. LATENCY</div></div>
+          <div class="mock-stat"><div class="mock-stat-val">217</div><div class="mock-stat-label">WORKFLOWS</div></div>
+        </div>
+        <div class="mock-rows">
+          <div class="mock-row">
+            <div class="row-icon" style="background:rgba(212,240,76,0.1);">⚡</div>
+            <span class="row-name">Onboarding → Slack notify</span>
+            <span class="row-status s-ok">COMPLETE</span>
+          </div>
+          <div class="mock-row">
+            <div class="row-icon" style="background:rgba(76,240,192,0.1);">🔄</div>
+            <span class="row-name">Stripe → CRM sync</span>
+            <span class="row-status s-run">RUNNING</span>
+          </div>
+          <div class="mock-row">
+            <div class="row-icon" style="background:rgba(255,255,255,0.04);">📊</div>
+            <span class="row-name">Weekly digest report</span>
+            <span class="row-status s-wait">QUEUED</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mockup-chip">
+      <div class="chip-icon">✦</div>
+      <div>
+        <div class="chip-text-top">AI suggestion ready</div>
+        <div class="chip-text-sub">→ OPTIMIZE PIPELINE</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGOS -->
+<div class="logos" style="position:relative;z-index:1;">
+  <span class="logos-label">Trusted by</span>
+  <div class="logos-row">
+    <span class="logo-pill">Notion</span>
+    <span class="logo-pill">Linear</span>
+    <span class="logo-pill">Vercel</span>
+    <span class="logo-pill">Stripe</span>
+    <span class="logo-pill">Figma</span>
+    <span class="logo-pill">Loom</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <p class="section-eyebrow">Features</p>
+  <h2 class="section-title">Built for teams that can't afford <em>downtime</em></h2>
+  <div class="features-layout">
+    <div class="feature-item wide">
+      <div class="feature-num">01 —</div>
+      <h3>Instant workflow automation</h3>
+      <p>Build multi-step pipelines in minutes. No code, no glue scripts — just logic that runs exactly when it should, every time.</p>
+      <span class="feature-tag">NO-CODE BUILDER</span>
+    </div>
+    <div class="feature-item">
+      <div class="feature-num">02 —</div>
+      <h3>200+ native integrations</h3>
+      <p>Slack, Notion, GitHub, Jira, Stripe — all connected out of the box with zero config.</p>
+      <span class="feature-tag">INTEGRATIONS</span>
+    </div>
+    <div class="feature-item">
+      <div class="feature-num">03 —</div>
+      <h3>AI-assisted logic engine</h3>
+      <p>AI that watches your runs and suggests smarter conditions, error recovery paths, and timing improvements.</p>
+      <span class="feature-tag">AI LAYER</span>
+    </div>
+    <div class="feature-item">
+      <div class="feature-num">04 —</div>
+      <h3>Edge-deployed runtime</h3>
+      <p>Every workflow runs at the edge — under 50ms globally, no cold starts, full region control.</p>
+      <span class="feature-tag">INFRASTRUCTURE</span>
+    </div>
+    <div class="feature-item">
+      <div class="feature-num">05 —</div>
+      <h3>Enterprise-grade security</h3>
+      <p>SOC 2 Type II. End-to-end encryption, RBAC, and immutable audit logs for every run.</p>
+      <span class="feature-tag">SECURITY</span>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<div class="metrics" style="position:relative;z-index:1;">
+  <div class="metrics-grid">
+    <div class="metric-item"><div class="metric-val">99<sup>%</sup></div><div class="metric-label">Uptime SLA</div><div class="metric-delta">↑ 0.02% MoM</div></div>
+    <div class="metric-item"><div class="metric-val">12k<sup>+</sup></div><div class="metric-label">Active teams</div><div class="metric-delta">↑ 34% this quarter</div></div>
+    <div class="metric-item"><div class="metric-val">4M<sup>+</sup></div><div class="metric-label">Workflow runs / day</div><div class="metric-delta">↑ 18% WoW</div></div>
+    <div class="metric-item"><div class="metric-val">42<sup>ms</sup></div><div class="metric-label">Avg. execution</div><div class="metric-delta">↓ 12ms vs last month</div></div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="pricing-inner">
+    <div class="pricing-top">
+      <div>
+        <p class="section-eyebrow">Pricing</p>
+        <h2 class="section-title" style="margin-bottom:0;">One price.<br><em>All features.</em></h2>
+      </div>
+      <p style="font-size:14px;color:var(--text-muted);max-width:280px;font-weight:300;line-height:1.7;align-self:flex-end;">No hidden fees, no feature gates. Every plan includes the full platform.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="p-card">
+        <p class="p-name">Starter</p>
+        <div class="p-price"><sup>$</sup>0</div>
+        <p class="p-period">Forever free</p>
+        <hr class="p-div">
+        <ul class="p-features">
+          <li>5 active workflows</li>
+          <li>500 runs / month</li>
+          <li>5 integrations</li>
+          <li class="off">AI-assisted logic</li>
+          <li class="off">Team seats</li>
+        </ul>
+        <button class="btn-plan btn-ghost">Get started free</button>
+      </div>
+      <div class="p-card featured">
+        <span class="feat-chip">Most popular</span>
+        <p class="p-name">Pro</p>
+        <div class="p-price"><sup>$</sup>49</div>
+        <p class="p-period">/ month, billed annually</p>
+        <hr class="p-div">
+        <ul class="p-features">
+          <li>Unlimited workflows</li>
+          <li>50,000 runs / month</li>
+          <li>All integrations</li>
+          <li>AI-assisted logic</li>
+          <li>5 team seats</li>
+        </ul>
+        <button class="btn-plan btn-primary">Start free trial</button>
+      </div>
+      <div class="p-card">
+        <p class="p-name">Enterprise</p>
+        <div class="p-price" style="font-size:38px;letter-spacing:-1px;margin-top:6px;">Custom</div>
+        <p class="p-period">Volume pricing</p>
+        <hr class="p-div">
+        <ul class="p-features">
+          <li>Unlimited everything</li>
+          <li>SSO + SAML</li>
+          <li>Dedicated support</li>
+          <li>Custom SLA</li>
+          <li>On-premise option</li>
+        </ul>
+        <button class="btn-plan btn-ghost">Contact sales</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="testi-inner">
+    <p class="section-eyebrow">Testimonials</p>
+    <h2 class="section-title">What teams<br>are <em>saying</em></h2>
+    <div class="testi-grid">
+      <div class="t-card">
+        <div class="t-quote">Arcflow replaced three tools we stitched together manually. Our eng team saved 10+ hours a week from day one.</div>
+        <div class="t-author">
+          <div class="t-av">AS</div>
+          <div><div class="t-name">Alex Santos</div><div class="t-role">CTO · Qira Health</div></div>
+        </div>
+      </div>
+      <div class="t-card">
+        <div class="t-quote">The AI suggestion feature is actually useful — not a gimmick. It caught logic gaps we'd have missed in code review.</div>
+        <div class="t-author">
+          <div class="t-av">MK</div>
+          <div><div class="t-name">Maria Kim</div><div class="t-role">Head of Ops · Delio</div></div>
+        </div>
+      </div>
+      <div class="t-card">
+        <div class="t-quote">Migrated from Zapier in a weekend. Edge runtime is noticeably faster and the audit logs made compliance happy.</div>
+        <div class="t-author">
+          <div class="t-av">TN</div>
+          <div><div class="t-name">Tom Nguyen</div><div class="t-role">Eng Lead · Marble</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-left">
+      <h2>Stop shipping<br><em>workarounds.</em></h2>
+      <p>Join 12,000+ teams that trust Arcflow to run their critical workflows. Up in minutes, not days.</p>
+    </div>
+    <div class="cta-right">
+      <input class="cta-input" type="email" placeholder="Work email">
+      <button class="btn-primary btn-lg" style="border-radius:9px;">Start free trial →</button>
+      <span class="cta-note">No credit card · 14-day trial · Cancel anytime</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">
+        <div class="logo-mark"><svg viewBox="0 0 14 14" fill="none"><path d="M2 7L7 2L12 7L7 12L2 7Z" fill="#06080D"/></svg></div>
+        Arcflow
+      </a>
+      <p>The workflow automation platform built for modern engineering teams.</p>
+    </div>
+    <div class="footer-links">
+      <div class="fc">
+        <h4>Product</h4>
+        <ul><li><a href="#">Features</a></li><li><a href="#">Integrations</a></li><li><a href="#">Pricing</a></li><li><a href="#">Changelog</a></li></ul>
+      </div>
+      <div class="fc">
+        <h4>Developers</h4>
+        <ul><li><a href="#">Docs</a></li><li><a href="#">API Reference</a></li><li><a href="#">Status</a></li><li><a href="#">GitHub</a></li></ul>
+      </div>
+      <div class="fc">
+        <h4>Company</h4>
+        <ul><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Careers</a></li><li><a href="#">Contact</a></li></ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Arcflow, Inc.</p>
+    <p>Privacy · Terms · Cookies</p>
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const h = document.documentElement;
+    const i = document.getElementById('ti');
+    if (h.getAttribute('data-theme') === 'dark') {
+      h.setAttribute('data-theme', 'light');
+      i.textContent = '☾';
+    } else {
+      h.setAttribute('data-theme', 'dark');
+      i.textContent = '☀';
+    }
+  }
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.feature-item, .p-card, .t-card, .metric-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(18px)';
+    el.style.transition = 'opacity .55s ease, transform .55s ease';
+    obs.observe(el);
+  });
+</script>
+</body>
+</html>
